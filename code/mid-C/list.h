@@ -8,6 +8,7 @@ typedef struct person
     char name[20];
     element_t food[20];
     int count_food;
+    int times;
   }person_t;
 
 struct Node {
@@ -59,6 +60,6 @@ int length(list l);
 // free a list
 void free_list(list l);
 
-int find_food(list l,char *x);
+int find_food(node_t l,char *x);
 
 #endif

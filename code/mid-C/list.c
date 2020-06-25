@@ -164,7 +164,7 @@ list insert_tail(list l,person_t x)
       }
   }
 
-int find_food(list l,char *x)
+int find_food(node_t l,char *x)
   {
     int i;
     for(i=1;i<=l->data.count_food;i++)

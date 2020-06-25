@@ -16,6 +16,19 @@ struct TreeNode {
 
 typedef struct TreeNode* tree;
 
+typedef struct Queue_t{
+    int front,rear,size;
+    unsigned limit;
+    tree _Data;
+}Queue;
+
+typedef struct
+    {
+        char key[20];
+        element_t data;
+    }
+sort_abc;
+
 tree createNullTree();
 tree createLeaf(element_t x);
 tree createTree(element_t x, tree l, tree r);
@@ -50,4 +63,9 @@ int rightChildCount(tree t);
 
 void freetree(tree t);
 
+int countNode(tree t);
+void breadth_first_search(tree Root);
+
+tree  minValueNode(tree node);
+tree deleteNode(tree root,char* x);
 #endif

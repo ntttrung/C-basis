@@ -57,7 +57,7 @@ char* treeToString(tree t) {
     right = treeToString(t->right);
     
     result = (char*)malloc(40 + strlen(left) + strlen(right));
-    sprintf(result, "node(%d,%s,%s)", t->data, left, right);
+    sprintf(result, "node(%s,%s,%s)", t->data.name, left, right);
     free(left);
     free(right);
     return result;
@@ -248,3 +248,144 @@ void freetree(tree t)
         free((void *)t);
       }
   }
+
+int countNode(tree t){
+  if (t == NULL) return 0;
+  return 1 + countNode(t->right) + countNode(t->left);
+}
+
+int IsEmpty(Queue *_Queue){
+    return (_Queue->size == 0);
+}
+int IsFull(Queue *_Queue){
+    return (_Queue->size == _Queue->limit);
+}
+Queue *CreateNewQueue(tree Root){
+    Queue *newQueue = (Queue *) malloc(sizeof(Queue));
+    newQueue->front = 0;
+    newQueue->rear = 0;
+    newQueue->size = 0;
+    newQueue->limit = countNode(Root);
+    newQueue->_Data = (tree) malloc(sizeof(struct TreeNode) * countNode(Root));
+    return newQueue;
+}
+
+void enqueue(Queue **_Queue,tree Node){
+    if(IsFull((*_Queue))) {
+        printf("The queue is full\n");
+        return;
+    }
+    (*_Queue)->_Data[(*_Queue)->rear] = (*Node);
+    if((*_Queue)->rear + 1 < (*_Queue)->limit) (*_Queue)->rear +=1;
+    else (*_Queue)->rear = 0;
+    (*_Queue)->size += 1;
+    return;
+}   
+tree Dequeue(Queue *_Queue){
+    if(IsEmpty(_Queue)) {
+        printf("The queue is empty\n");
+        return NULL;
+    }
+    tree returnTree = (_Queue->_Data + _Queue->front );
+    if(_Queue->front + 1 < _Queue->limit) _Queue->front +=1;
+    else _Queue->front = 0;
+    _Queue->size -= 1;
+    return returnTree;
+}
+
+// char lay_ten(char s[],char s1[])
+
+// {
+
+//     int len=strlen(s);
+//     int i = len-1,j;
+//     int m=0;
+//     while(i>=0)
+//     {
+//       if((s[i]==' ') && (s[i+1]!=' '))
+//       {
+//                   for(j=i+1;j<len;j++)
+//                   {
+//                       s1[m]=s[j];
+//                       m++; 
+//                   }
+//                   s[i]='\0';
+//                   break;
+//       }
+//       i--;
+//     } 
+// }
+
+void breadth_first_search(tree Root){
+    int i,count=1,c;
+    c=countNode(Root);
+    char str[20];
+    sort_abc arr[c+2];
+    Queue *queue = CreateNewQueue(Root);
+    tree RunNode = Root;
+    if(RunNode != NULL){
+        enqueue(&queue,RunNode);
+        while(!IsEmpty(queue)){
+            RunNode = Dequeue(queue);
+            // fprintf(ptr,"%s %s",RunNode->data->word,RunNode->data->meaning);
+            // for(i=1;i<=RunNode->data.total;i++)
+            //   printf("%-20s\t%lld\t\t%s\n",RunNode->data.name,RunNode->data.account[i].balance,RunNode->data.account[i].telephone);
+            // if(RunNode->left != NULL || RunNode->right != NULL || !IsEmpty(queue)) printf("\n");
+            // strcpy(arr[count].key,lay_ten(RunNode->data.name));
+            // strcpy(str,RunNode->data.name);
+            // lay_ten(str,arr[count].key);
+            strcpy(arr[count].key,RunNode->data.name);
+            arr[count].data=RunNode->data;
+            count++;
+            if(RunNode->left != NULL) enqueue(&queue,RunNode->left);
+            if(RunNode->right != NULL) enqueue(&queue,RunNode->right);
+        }
+    }
+    int j;
+    sort_abc tmp;
+    for(i=1;i<c;i++)
+      for(j=i+1;j<=c;j++)
+        if(strcasecmp(arr[i].key,arr[j].key)>0)
+          {
+            tmp=arr[i];
+            arr[i]=arr[j];
+            arr[j]=tmp;
+          }
+    for(i=1;i<=c;i++)
+        printf("%s\t%d\n",arr[i].data.name,arr[i].data.times);
+    printf("\n");
+}
+
+tree  minValueNode(tree node) 
+{ 
+    tree current = node; 
+  
+    /* loop down to find the leftmost leaf */
+    while (current && current->left != NULL) 
+        current = current->left; 
+  
+    return current; 
+} 
+tree deleteNode(tree root,char* x){
+        if (root == NULL) return root;
+    if(strcmp(x,root->data.name) < 0){
+        root->left = deleteNode(root->left,x);
+    }else if(strcmp(x,root->data.name) > 0){
+        root->right = deleteNode(root->right,x);
+    }else{
+        if(root->left == NULL){
+            tree temp = root->right;
+            free(root);
+            return temp;
+        }else if(root->right == NULL){
+            tree temp = root->left;
+            free(root);
+            return temp; 
+        }else{
+            tree temp = minValueNode(root->right);
+            root->data = temp->data;
+            root->right = deleteNode(root->right,temp->data.name);
+        }
+    }
+    return root;
+}
