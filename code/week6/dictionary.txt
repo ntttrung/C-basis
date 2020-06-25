@@ -1,0 +1,12 @@
+teacher:giao vien
+tea:tra
+mom:me
+moon:trang
+hello:xin chao
+hi:xin chao
+dice:vach o vuong
+livable:song duoc
+live:song
+livelong:suot ngay/dem
+livid:bam tim
+livre:nua kilogram
