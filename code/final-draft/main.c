@@ -38,17 +38,12 @@ tree readdata()
                         if(j==1) 
                             strcpy(tmp.name,str1);
                         if(j==2) 
-                            strcpy(tmp.telephone,str1);
+                            strcpy(tmp.telephone,str1); 
                         if(j==3) 
                             tmp.balance=atoi(str1);
                     }
                 p=searchBST(t,tmp.name);
-                if(p==NULL) 
-                    t=insertBST(t,tmp);
-                else
-                    {
-                        t=insertBST(t,tmp);
-                    }
+                t=insertBST(t,tmp);
             }
         fclose(fin);
         return t;
