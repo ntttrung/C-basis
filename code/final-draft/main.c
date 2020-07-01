@@ -55,7 +55,7 @@ void print_data(tree t)
         breadth_first_search(t);
     }
 
-void input_data(tree t)
+tree input_data(tree t)
     {
         tree p;
         int i,dk=0;
@@ -86,6 +86,7 @@ void input_data(tree t)
                         t=insertBST(t,tmp);
                     }
             }
+        return t;
     }
     
 void look_up(tree t)
@@ -267,7 +268,7 @@ int main()
                         case 2:
                             {
                                 system("cls");
-                                input_data(t);
+                                t=input_data(t);
                                 print_data(t);
                                 break;
                             }

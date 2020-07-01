@@ -57,7 +57,7 @@ char* treeToString(tree t) {
     right = treeToString(t->right);
     
     result = (char*)malloc(40 + strlen(left) + strlen(right));
-    sprintf(result, "node(%d,%s,%s)", t->data, left, right);
+    sprintf(result, "node(%s,%s,%s)", t->data.name, left, right);
     free(left);
     free(right);
     return result;
@@ -143,13 +143,13 @@ int rightChildCount(tree t) {
   // TODO
 }
 
-struct TreeNode *searchBST(tree t, element_t x) {
+struct TreeNode *searchBST(tree t, char* x) {
   if (isNullTree(t))
     return NULL;
   
-  if(t->data==x)
+  if(strcasecmp(t->data.id,x)==0)
     return t;
-  else if (t->data<x)
+  else if (strcasecmp(t->data.id,x)<0)
     return searchBST(right(t), x);
   else
     return searchBST(left(t), x);
@@ -159,9 +159,9 @@ tree insertBST(tree t, element_t x) {
   if (isNullTree(t))
     return createLeaf(x);
 
-  if (t->data==x)
+  if (strcasecmp(t->data.id,x.id)==0)
     return t;
-  else if (t->data>x) {
+  else if (strcasecmp(t->data.id,x.id)>0) {
     t->left = insertBST(t->left, x);
     return t;
   } else {
@@ -209,6 +209,35 @@ tree removeRootBST(tree t) {
   return t;
 }
 
+tree removeBST(tree t, char* x) {
+  tree p, tmp;
+  if (isNullTree(t))
+    return NULL;
+
+  if (strcasecmp(t->data.name,x)==0)
+    return removeRootBST(t);
+
+  p = NULL;
+  tmp = t;
+  while ((tmp != NULL) && (strcasecmp(tmp->data.name,x)!=0)) 
+    if (strcasecmp(tmp->data.name,x)) {
+      p = tmp;
+      tmp = tmp->left;
+    } else {
+      p = tmp;
+      tmp = tmp->right;
+    }
+
+  if (tmp != NULL) {
+    if (p->left == tmp) {
+      p->left = removeRootBST(tmp);
+    }
+    else {
+      p->right = removeRootBST(tmp);
+    }
+  }
+  return t;
+}
 
 void freetree(tree t)
   {
@@ -305,7 +334,7 @@ void breadth_first_search(tree Root){
             // strcpy(arr[count].key,lay_ten(RunNode->data.name));
             // strcpy(str,RunNode->data.name);
             // lay_ten(str,arr[count].key);
-            strcpy(arr[count].key,RunNode->data.name);
+            strcpy(arr[count].key,RunNode->data.id);
             arr[count].data=RunNode->data;
             count++;
             if(RunNode->left != NULL) enqueue(&queue,RunNode->left);
@@ -323,10 +352,148 @@ void breadth_first_search(tree Root){
             arr[j]=tmp;
           }
     for(i=1;i<=c;i++)
-        printf("%s\t%d\n",arr[i].data.name,arr[i].data.times);
+    {
+        long long int total=0;
+        printf("%-20s %-20s ",arr[i].data.id,arr[i].data.name);
+        for( j=1;j<=arr[i].data.electronics;j++)
+        {
+          total += arr[i].data.total1[j];
+        }
+        for( j=1; j <=arr[i].data.fashion;j++)
+        {
+          total += arr[i].data.total2[j];
+        }
+        printf("%-15lld %-15d %-15d",total, arr[i].data.electronics, arr[i].data.fashion);
+        printf("\n");
+
+    }
+
     printf("\n");
 }
+void Best(tree Root){
+    int i,count=1,c;
+    c=countNode(Root);
+    char str[20];
+    sort_abc arr[c+2];
+    Queue *queue = CreateNewQueue(Root);
+    tree RunNode = Root;
+    if(RunNode != NULL){
+        enqueue(&queue,RunNode);
+        while(!IsEmpty(queue)){
+            RunNode = Dequeue(queue);
+            // fprintf(ptr,"%s %s",RunNode->data->word,RunNode->data->meaning);
+            // for(i=1;i<=RunNode->data.total;i++)
+            //   printf("%-20s\t%lld\t\t%s\n",RunNode->data.name,RunNode->data.account[i].balance,RunNode->data.account[i].telephone);
+            // if(RunNode->left != NULL || RunNode->right != NULL || !IsEmpty(queue)) printf("\n");
+            // strcpy(arr[count].key,lay_ten(RunNode->data.name));
+            // strcpy(str,RunNode->data.name);
+            // lay_ten(str,arr[count].key);
+            strcpy(arr[count].key,RunNode->data.id);
+            arr[count].data=RunNode->data;
+            count++;
+            if(RunNode->left != NULL) enqueue(&queue,RunNode->left);
+            if(RunNode->right != NULL) enqueue(&queue,RunNode->right);
+        }
+    }
+    int j;
+    sort_abc tmp;
+    for(i=1;i<c;i++)
+      for(j=i+1;j<=c;j++)
+        if(strcasecmp(arr[i].key,arr[j].key)>0)
+          {
+            tmp=arr[i];
+            arr[i]=arr[j];
+            arr[j]=tmp;
+          }
+    long long int max=0;
+    int ind;
+    for(i=1;i<=c;i++)
+    {
+        long long int total=0;
+        
+        for(j=1;j<=arr[i].data.electronics;j++)
+        {
+          total += arr[i].data.total1[j];
+        }
+        for( j=1; j <=arr[i].data.fashion;j++)
+        {
+          total += arr[i].data.total2[j];
+        }
+        if (total >max)
+        {
+          max = total;
+          ind=i;
+        }
+        
 
+    }
+    printf("Best Customer: \n");
+    printf("%s %s %lld\n",arr[ind].data.id,arr[ind].data.name, max);
+
+    printf("\n");
+}
+void TotalPayment(tree Root){
+    int i,count=1,c;
+    c=countNode(Root);
+    char str[20];
+    sort_abc arr[c+2];
+    Queue *queue = CreateNewQueue(Root);
+    tree RunNode = Root;
+    if(RunNode != NULL){
+        enqueue(&queue,RunNode);
+        while(!IsEmpty(queue)){
+            RunNode = Dequeue(queue);
+            // fprintf(ptr,"%s %s",RunNode->data->word,RunNode->data->meaning);
+            // for(i=1;i<=RunNode->data.total;i++)
+            //   printf("%-20s\t%lld\t\t%s\n",RunNode->data.name,RunNode->data.account[i].balance,RunNode->data.account[i].telephone);
+            // if(RunNode->left != NULL || RunNode->right != NULL || !IsEmpty(queue)) printf("\n");
+            // strcpy(arr[count].key,lay_ten(RunNode->data.name));
+            // strcpy(str,RunNode->data.name);
+            // lay_ten(str,arr[count].key);
+            strcpy(arr[count].key,RunNode->data.id);
+            arr[count].data=RunNode->data;
+            count++;
+            if(RunNode->left != NULL) enqueue(&queue,RunNode->left);
+            if(RunNode->right != NULL) enqueue(&queue,RunNode->right);
+        }
+    }
+    int j;
+    sort_abc tmp;
+    for(i=1;i<c;i++)
+      for(j=i+1;j<=c;j++)
+        if(strcasecmp(arr[i].key,arr[j].key)>0)
+          {
+            tmp=arr[i];
+            arr[i]=arr[j];
+            arr[j]=tmp;
+          }
+    long long int total_electronics=0;
+    int electronic=0;
+    int fashions = 0;
+    long long int total_fashion = 0;
+    for(i=1;i<=c;i++)
+    {
+        
+        
+        electronic += arr[i].data.electronics;
+        for(j=1;j<=arr[i].data.electronics;j++)
+        {
+          total_electronics += arr[i].data.total1[j];
+        }
+        fashions += arr[i].data.fashion;
+        for( j=1; j <=arr[i].data.fashion;j++)
+        {
+          total_fashion += arr[i].data.total2[j];
+        }
+        
+
+    }
+    printf("\t\t Total payment \t\t Number of transactions\n");
+    printf("Electronic\t %lld\t\t\t %d\n", total_electronics, electronic);
+    printf("Fashion \t %lld\t\t\t %d\n",total_fashion, fashions);
+
+    printf("\n");
+}
 tree  minValueNode(tree node) 
 { 
     tree current = node; 
@@ -337,11 +504,11 @@ tree  minValueNode(tree node)
   
     return current; 
 } 
-tree deleteNode(tree root,element_t x){
+tree deleteNode(tree root,char* x){
         if (root == NULL) return root;
-    if(x<root->data){
+    if(strcmp(x,root->data.name) < 0){
         root->left = deleteNode(root->left,x);
-    }else if(x>root->data){
+    }else if(strcmp(x,root->data.name) > 0){
         root->right = deleteNode(root->right,x);
     }else{
         if(root->left == NULL){
@@ -355,7 +522,7 @@ tree deleteNode(tree root,element_t x){
         }else{
             tree temp = minValueNode(root->right);
             root->data = temp->data;
-            root->right = deleteNode(root->right,temp->data);
+            root->right = deleteNode(root->right,temp->data.name);
         }
     }
     return root;
