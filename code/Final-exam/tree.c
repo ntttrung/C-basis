@@ -428,7 +428,7 @@ void Best(tree Root){
 
     }
     printf("Best Customer: \n");
-    printf("%s %s %lld\n",arr[ind].data.id,arr[ind].data.name, max);
+    printf("%-10s %-10s %lld \t%d \t%d\n",arr[ind].data.id,arr[ind].data.name, max,arr[ind].data.electronics,arr[ind].data.fashion);
 
     printf("\n");
 }
@@ -489,8 +489,8 @@ void TotalPayment(tree Root){
 
     }
     printf("\t\t Total payment \t\t Number of transactions\n");
-    printf("Electronic\t %lld\t\t\t %d\n", total_electronics, electronic);
-    printf("Fashion \t %lld\t\t\t %d\n",total_fashion, fashions);
+    printf("Dien tu\t\t %lld\t\t\t %d\n", total_electronics, electronic);
+    printf("Thoi trang \t %lld\t\t\t %d\n",total_fashion, fashions);
 
     printf("\n");
 }
